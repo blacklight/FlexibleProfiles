@@ -1,11 +1,15 @@
-package org.blacklight.android.flexible_profiles;
+package org.blacklight.android.flexibleprofiles.activity;
+
+import org.blacklight.android.flexible_profiles.R;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
+import android.widget.TabHost;
+import android.widget.TabHost.TabSpec;
 
-public class HelloAndroidActivity extends Activity {
+public class FlexibleProfilesActivity extends Activity {
 
     /**
      * Called when the activity is first created.
@@ -17,6 +21,19 @@ public class HelloAndroidActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        TabHost tabHost = (TabHost) findViewById(android.R.id.tabhost);
+        TabSpec tabProfiles = tabHost.newTabSpec("Profiles");
+        TabSpec tabRules = tabHost.newTabSpec("Rules");
+        
+        tabProfiles.setIndicator("Profiles");
+        tabProfiles.setContent(new Intent(this, ProfilesActivity.class));
+        
+        tabRules.setIndicator("Rules");
+        tabRules.setContent(new Intent(this, RulesActivity.class));
+        
+        tabHost.addTab(tabProfiles);
+        tabHost.addTab(tabRules);
     }
 
     @Override
