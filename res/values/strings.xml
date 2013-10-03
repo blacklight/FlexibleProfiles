@@ -5,5 +5,7 @@
     <string name="hello">Hello flexible-profiles!</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="enter_here_the_path_to_the_script_you_want_to_execute">Enter here the path to the script you want to execute</string>
+    <string name="load_script">Load script</string>
 
 </resources>

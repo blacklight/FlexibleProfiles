@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<flexible version="1.0">
+	<profiles>
+		<!-- TODO We also want to support special profile "Flexible Disabled" -->
+
+		<profile name="Home">
+			<setting class="WiFi" value="On"/>
+			<setting class="Mobile Data" value="Off"/>
+		</profile>
+
+		<profile name="Charging" extends="Home">
+			<setting class="Bluetooth" value="On"/>
+		</profile>
+
+		<profile name="Outdoor">
+			<setting class="WiFi" value="Off"/>
+			<setting class="Mobile Data" value="On"/>
+			<setting class="Sync" value="Off"/>
+		</profile>
+
+		<profile name="Office">
+			<setting class="WiFi" value="Off"/>
+			<setting class="Mobile Data" value="Off"/>
+			<setting class="Bluetooth" value="Off"/>
+			<setting class="Sync" value="Off"/>
+		</profile>
+
+	</profiles>
+
+	<rules>
+		<!-- Priority is sorted decreasingly. So 0 is the maximum priority -->
+		<rule name="When Charging" priority="1">
+			<when>
+				<event class="Power" value="True"/>
+			</when>
+
+			<then>
+				<apply profile="Charging"/>
+			</then>
+		</rule>
+
+		<rule name="When At Home">
+			<when>
+				<event class="WiFi Connected" value="True"/>
+				<event class="Power" value="False"/>
+				<!-- ESSID based too? -->
+			</when>
+
+			<then>
+				<apply profile="Home"/>
+			</then>
+		</rule>
+
+		<rule name="When In Office" priority="0">
+			<when>
+				<event class="Time Schedule" value="Mon:{09:00-13:00, 14:00-18:30}, Tue:{09:00-13:00, 14:00-18:30}, Wed:{09:00-13:00, 14:00-18:30}, Thu:{09:00-13:00, 14:00-18:30}, Fri:{09:00-13:00, 14:00-18:30}"/>
+			</when>
+
+			<then>
+				<apply profile="Office"/>
+			</then>
+		</rule>
+
+		<rule name="When Outdoor">
+			<when>
+				<event class="WiFi Connected" value="False"/>
+			</when>
+
+			<then>
+				<apply profile="Outdoor"/>
+			</then>
+		</rule>
+
+	</rules>
+</flexible>
+

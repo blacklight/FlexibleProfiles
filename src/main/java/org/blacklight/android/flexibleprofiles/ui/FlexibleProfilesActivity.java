@@ -1,13 +1,13 @@
-package org.blacklight.android.flexibleprofiles.activity;
+package org.blacklight.android.flexibleprofiles.ui;
 
 import org.blacklight.android.flexible_profiles.R;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
-import android.widget.TabHost;
-import android.widget.TabHost.TabSpec;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.TextView;
 
 public class FlexibleProfilesActivity extends Activity {
 
@@ -22,18 +22,9 @@ public class FlexibleProfilesActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        TabHost tabHost = (TabHost) findViewById(android.R.id.tabhost);
-        TabSpec tabProfiles = tabHost.newTabSpec("Profiles");
-        TabSpec tabRules = tabHost.newTabSpec("Rules");
-        
-        tabProfiles.setIndicator("Profiles");
-        tabProfiles.setContent(new Intent(this, ProfilesActivity.class));
-        
-        tabRules.setIndicator("Rules");
-        tabRules.setContent(new Intent(this, RulesActivity.class));
-        
-        tabHost.addTab(tabProfiles);
-        tabHost.addTab(tabRules);
+        final Button fileLoadButton = (Button) findViewById(R.id.fileLoadButton);
+        final TextView filePathTextView = (AutoCompleteTextView) findViewById(R.id.filePathTextView);
+        fileLoadButton.setOnClickListener(new FileLoadButtonListener(filePathTextView));
     }
 
     @Override
@@ -42,6 +33,6 @@ public class FlexibleProfilesActivity extends Activity {
 	getMenuInflater().inflate(org.blacklight.android.flexible_profiles.R.menu.main, menu);
 	return true;
     }
-
+    
 }
 
