@@ -39,6 +39,7 @@ public class ConfigurationFactory {
 			
 			for (int i=0; i < profiles.size(); i++) {
 				Element profile = profiles.get(i);
+				String extend = profile.getAttributeValue("extends").trim();
 				String name = profile.getAttributeValue("name").trim();
 				if (name == null || name.equals("")) {
 					throw new ConfigurationParseException("Profile [" + i + "] has no name");

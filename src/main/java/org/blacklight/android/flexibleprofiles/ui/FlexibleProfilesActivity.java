@@ -10,6 +10,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class FlexibleProfilesActivity extends Activity {
+	private static FlexibleProfilesActivity instance;
+	
+	public static FlexibleProfilesActivity getInstance() {
+		return instance;
+	}
 
     /**
      * Called when the activity is first created.
@@ -21,6 +26,7 @@ public class FlexibleProfilesActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        instance = this;
         
         final Button fileLoadButton = (Button) findViewById(R.id.fileLoadButton);
         final TextView filePathTextView = (AutoCompleteTextView) findViewById(R.id.filePathTextView);
