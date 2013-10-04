@@ -11,6 +11,7 @@ import org.blacklight.android.flexibleprofiles.profiles.Profile;
 import org.blacklight.android.flexibleprofiles.profiles.settings.Setting;
 import org.blacklight.android.flexibleprofiles.profiles.settings.SettingFactory;
 import org.blacklight.android.flexibleprofiles.rules.Rule;
+import org.blacklight.android.flexibleprofiles.rules.events.Event;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -71,9 +72,38 @@ public abstract class ConfigurationFactory {
 					throw new ConfigurationParseException("Invalid priority value [" + priorityStr + "] - it should be a number");
 				}
 			}
+			
+			final Element whenElement = ruleElement.getChild("when");
+			if (whenElement == null) {
+				throw new ConfigurationParseException("The rule [" + name + "] has no events associated");
+			}
+			List<Event> events = parseEvents(whenElement);
+			
+			final Element thenElement = ruleElement.getChild("then");
+			if (thenElement == null) {
+				throw new ConfigurationParseException("The rule [" + name + "] has no profile associated");
+			}
+			final Element applyElement = thenElement.getChild("apply");
+			if (applyElement == null) {
+				throw new ConfigurationParseException("The rule [" + name + "] has no profile associated");
+			}
+			Profile profile = parseApply(applyElement);
+			
+			Rule rule = new Rule(events, profile, priority);
+			rules.add(rule);
 		}
 		
 		return rules;
+	}
+
+	private static Profile parseApply(Element applyElement) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private static List<Event> parseEvents(Element whenElement) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	private static List<Profile> parseProfiles(Element profilesNode) throws ConfigurationParseException {
