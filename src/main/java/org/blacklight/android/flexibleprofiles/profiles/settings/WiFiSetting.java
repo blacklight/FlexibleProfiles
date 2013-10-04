@@ -1,4 +1,4 @@
-package org.blacklight.android.flexibleprofiles.configuration.settings;
+package org.blacklight.android.flexibleprofiles.profiles.settings;
 
 import org.blacklight.android.flexibleprofiles.ui.FlexibleProfilesActivity;
 
@@ -21,6 +21,11 @@ public class WiFiSetting implements Setting {
 		} catch (Exception e) {
 			// TODO Manage exception here
 		}
+	}
+
+	@Override
+	public Object getValue() {
+		return value;
 	}
 
 }

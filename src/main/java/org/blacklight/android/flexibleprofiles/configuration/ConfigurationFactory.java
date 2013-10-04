@@ -1,19 +1,22 @@
 package org.blacklight.android.flexibleprofiles.configuration;
 
-import android.annotation.SuppressLint;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.blacklight.android.flexibleprofiles.exceptions.ConfigurationParseException;
 import org.blacklight.android.flexibleprofiles.exceptions.FlexibleProfileException;
+import org.blacklight.android.flexibleprofiles.profiles.Profile;
+import org.blacklight.android.flexibleprofiles.profiles.settings.Setting;
+import org.blacklight.android.flexibleprofiles.profiles.settings.SettingFactory;
+import org.blacklight.android.flexibleprofiles.rules.Rule;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-public class ConfigurationFactory {
-	@SuppressLint("DefaultLocale")
+public abstract class ConfigurationFactory {
 	public static Configuration fromReader(final Reader inputReader) throws FlexibleProfileException {
 		try {
 			Document document = (Document) new SAXBuilder().build(inputReader);
@@ -25,38 +28,111 @@ public class ConfigurationFactory {
 			Element profilesNode = rootElement.getChild("profiles");
 			Element rulesNode = rootElement.getChild("rules");
 			
-			@SuppressWarnings("unchecked")
-			List<Element> profiles = profilesNode.getChildren("profile");
-			if (profiles.size() == 0) {
-				throw new ConfigurationParseException("No profiles specified");
-			}
+			List<Profile> profiles = parseProfiles(profilesNode);
+			List<Rule> rules = parseRules(rulesNode);
+			postProcessLogic();
 			
-			@SuppressWarnings("unchecked")
-			List<Element> rules = rulesNode.getChildren("rule");
-			if (rules.size() == 0) {
-				throw new ConfigurationParseException("No rules specified");
-			}
-			
-			for (int i=0; i < profiles.size(); i++) {
-				Element profile = profiles.get(i);
-				String extend = profile.getAttributeValue("extends").trim();
-				String name = profile.getAttributeValue("name").trim();
-				if (name == null || name.equals("")) {
-					throw new ConfigurationParseException("Profile [" + i + "] has no name");
-				}
-				
-				@SuppressWarnings("unchecked")
-				List<Element> settings = profile.getChildren("setting");
-				if (settings.size() == 0) {
-					throw new ConfigurationParseException("No settings specified for profile [" + name + "]");
-				}
-			}
+			return new Configuration(profiles, rules);
 		} catch (JDOMException e) {
 			throw new FlexibleProfileException(e);
 		} catch (IOException e) {
 			throw new FlexibleProfileException(e);
 		}
-		
-		return null;
 	}
+
+	private static void postProcessLogic() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static List<Rule> parseRules(Element rulesNode) throws ConfigurationParseException {
+		@SuppressWarnings("unchecked")
+		List<Element> ruleElements = rulesNode.getChildren("rule");
+		if (ruleElements.size() == 0) {
+			throw new ConfigurationParseException("No rules specified");
+		}
+		List<Rule> rules = new ArrayList<Rule>();
+			
+		for (Element ruleElement : ruleElements) {
+			String name = ruleElement.getAttributeValue("name");
+			if (name != null) {
+				name = name.trim();
+			}
+			if (name == null || name.equals("")) {
+				throw new ConfigurationParseException("No [name] attribute associated to the rule");
+			}
+			
+			String priorityStr = ruleElement.getAttributeValue("priority");
+			int priority = Rule.AUTOMATIC_PRIORITY;
+			if (priorityStr != null) {
+				try {
+					priority = Integer.parseInt(name.trim());
+				} catch (final Exception e) {
+					throw new ConfigurationParseException("Invalid priority value [" + priorityStr + "] - it should be a number");
+				}
+			}
+		}
+		
+		return rules;
+	}
+
+	private static List<Profile> parseProfiles(Element profilesNode) throws ConfigurationParseException {
+		@SuppressWarnings("unchecked")
+		List<Element> profileElements = profilesNode.getChildren("profile");
+		if (profileElements.size() == 0) {
+			throw new ConfigurationParseException("No profiles specified");
+		}
+		List<Profile> profiles = new ArrayList<Profile>();
+		
+		for (Element profileElement : profileElements) {
+			String name = profileElement.getAttributeValue("name");
+			if (name != null) {
+				name = name.trim();
+			}
+			if (name == null || name.equals("")) {
+				throw new ConfigurationParseException("No [name] attribute associated to the profile");
+			}
+			
+			String extendz = profileElement.getAttributeValue("extends");
+			if (extendz != null) {
+				extendz = extendz.trim();
+			}
+			
+			@SuppressWarnings("unchecked")
+			List<Element> settingElements = profileElement.getChildren("setting");
+			List<Setting> settings = parseSettings(settingElements);
+			Profile profile = new Profile(name, null, settings);
+			profiles.add(profile);
+		}
+
+		return profiles;
+	}
+
+	private static List<Setting> parseSettings(List<Element> settingElements) throws ConfigurationParseException {
+		List<Setting> settings = new ArrayList<Setting>();
+		
+		for (Element settingElement : settingElements) {
+			String clazz = settingElement.getAttributeValue("class");
+			if (clazz != null) {
+				clazz = clazz.trim();
+			}
+			if (clazz == null || clazz.equals("")) {
+				throw new ConfigurationParseException("No [class] attribute associated to the setting");
+			}
+			
+			String value = settingElement.getAttributeValue("value");
+			if (value != null) {
+				value = value.trim();
+			}
+			if (value == null || value.equals("")) {
+				throw new ConfigurationParseException("No [class] attribute associated to the setting");
+			}
+			
+			Setting setting = SettingFactory.createSetting(clazz, value);
+			settings.add(setting);
+		}
+		
+		return settings;
+	}
+	
 }
