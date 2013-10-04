@@ -3,7 +3,9 @@ package org.blacklight.android.flexibleprofiles.configuration;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.blacklight.android.flexibleprofiles.exceptions.ConfigurationParseException;
 import org.blacklight.android.flexibleprofiles.exceptions.FlexibleProfileException;
@@ -12,12 +14,25 @@ import org.blacklight.android.flexibleprofiles.profiles.settings.Setting;
 import org.blacklight.android.flexibleprofiles.profiles.settings.SettingFactory;
 import org.blacklight.android.flexibleprofiles.rules.Rule;
 import org.blacklight.android.flexibleprofiles.rules.events.Event;
+import org.blacklight.android.flexibleprofiles.rules.events.EventFactory;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
 public abstract class ConfigurationFactory {
+	private static class ConfigurationParseContext {
+		private final Map<String, Profile> profiles;
+		private final Map<String, String> extendz;
+		private final Map<Rule, String> rulesProfiles;
+		
+		public ConfigurationParseContext() {
+			profiles = new HashMap<String, Profile>();
+			extendz = new HashMap<String, String>();
+			rulesProfiles = new HashMap<Rule, String>();
+		}
+	}
+
 	public static Configuration fromReader(final Reader inputReader) throws FlexibleProfileException {
 		try {
 			Document document = (Document) new SAXBuilder().build(inputReader);
@@ -28,10 +43,11 @@ public abstract class ConfigurationFactory {
 			
 			Element profilesNode = rootElement.getChild("profiles");
 			Element rulesNode = rootElement.getChild("rules");
+			ConfigurationParseContext context = new ConfigurationParseContext();
 			
-			List<Profile> profiles = parseProfiles(profilesNode);
-			List<Rule> rules = parseRules(rulesNode);
-			postProcessLogic();
+			List<Profile> profiles = parseProfiles(profilesNode, context);
+			List<Rule> rules = parseRules(rulesNode, context);
+			postProcessLogic(context);
 			
 			return new Configuration(profiles, rules);
 		} catch (JDOMException e) {
@@ -41,12 +57,30 @@ public abstract class ConfigurationFactory {
 		}
 	}
 
-	private static void postProcessLogic() {
-		// TODO Auto-generated method stub
+	private static void postProcessLogic(final ConfigurationParseContext context) throws ConfigurationParseException {
+		for (final String profileName : context.extendz.keySet()) {
+			String extendsName = context.extendz.get(profileName);
+			Profile profile = context.profiles.get(profileName);
+			Profile extendz = context.profiles.get(extendsName);
+			if (extendz == null) {
+				throw new ConfigurationParseException("Profile name [" + extendsName + "] not found");
+			}
+			
+			profile.applyExtension(extendz);
+		}
 		
+		for (final Rule rule : context.rulesProfiles.keySet()) {
+			String profileName = context.rulesProfiles.get(rule);
+			Profile profile = context.profiles.get(profileName);
+			if (profile == null) {
+				throw new ConfigurationParseException("Profile name [" + profileName + "] not found");
+			}
+			
+			rule.setProfile(profile);
+		}
 	}
 
-	private static List<Rule> parseRules(Element rulesNode) throws ConfigurationParseException {
+	private static List<Rule> parseRules(final Element rulesNode, final ConfigurationParseContext context) throws ConfigurationParseException {
 		@SuppressWarnings("unchecked")
 		List<Element> ruleElements = rulesNode.getChildren("rule");
 		if (ruleElements.size() == 0) {
@@ -83,30 +117,66 @@ public abstract class ConfigurationFactory {
 			if (thenElement == null) {
 				throw new ConfigurationParseException("The rule [" + name + "] has no profile associated");
 			}
+			
 			final Element applyElement = thenElement.getChild("apply");
 			if (applyElement == null) {
 				throw new ConfigurationParseException("The rule [" + name + "] has no profile associated");
 			}
-			Profile profile = parseApply(applyElement);
+			String profileName = parseApply(applyElement);
 			
-			Rule rule = new Rule(events, profile, priority);
+			Rule rule = new Rule(events, null, priority);
 			rules.add(rule);
+			context.rulesProfiles.put(rule, profileName);
 		}
 		
 		return rules;
 	}
 
-	private static Profile parseApply(Element applyElement) {
-		// TODO Auto-generated method stub
-		return null;
+	private static String parseApply(final Element applyElement) throws ConfigurationParseException {
+		String profile = applyElement.getAttributeValue("profile");
+		if (profile != null) {
+			profile = profile.trim();
+		}
+		if (profile == null || profile.equals("")) {
+			throw new ConfigurationParseException("No [profile] attribute associated to the <apply> tag");
+		}
+
+		return profile;
 	}
 
-	private static List<Event> parseEvents(Element whenElement) {
-		// TODO Auto-generated method stub
-		return null;
+	private static List<Event> parseEvents(final Element whenElement) throws ConfigurationParseException {
+		@SuppressWarnings("unchecked")
+		List<Element> eventElements = whenElement.getChildren("event");
+		if (eventElements.size() == 0) {
+			throw new ConfigurationParseException("No events specified");
+		}
+		List<Event> events = new ArrayList<Event>();
+		
+		for (final Element eventElement : eventElements) {
+			String clazz = eventElement.getAttributeValue("class");
+			if (clazz != null) {
+				clazz = clazz.trim();
+			}
+			if (clazz == null || clazz.equals("")) {
+				throw new ConfigurationParseException("No [class] attribute associated to the event");
+			}
+			
+			String value = eventElement.getAttributeValue("value");
+			if (value != null) {
+				value = value.trim();
+			}
+			if (value == null || value.equals("")) {
+				throw new ConfigurationParseException("No [value] attribute associated to the event");
+			}
+			
+			Event event = EventFactory.createEvent(clazz, value);
+			events.add(event);
+		}
+		
+		return events;
 	}
 
-	private static List<Profile> parseProfiles(Element profilesNode) throws ConfigurationParseException {
+	private static List<Profile> parseProfiles(final Element profilesNode, final ConfigurationParseContext context) throws ConfigurationParseException {
 		@SuppressWarnings("unchecked")
 		List<Element> profileElements = profilesNode.getChildren("profile");
 		if (profileElements.size() == 0) {
@@ -126,19 +196,21 @@ public abstract class ConfigurationFactory {
 			String extendz = profileElement.getAttributeValue("extends");
 			if (extendz != null) {
 				extendz = extendz.trim();
+				context.extendz.put(name, extendz);
 			}
 			
 			@SuppressWarnings("unchecked")
 			List<Element> settingElements = profileElement.getChildren("setting");
 			List<Setting> settings = parseSettings(settingElements);
 			Profile profile = new Profile(name, null, settings);
+			context.profiles.put(name, profile);
 			profiles.add(profile);
 		}
 
 		return profiles;
 	}
 
-	private static List<Setting> parseSettings(List<Element> settingElements) throws ConfigurationParseException {
+	private static List<Setting> parseSettings(final List<Element> settingElements) throws ConfigurationParseException {
 		List<Setting> settings = new ArrayList<Setting>();
 		
 		for (Element settingElement : settingElements) {

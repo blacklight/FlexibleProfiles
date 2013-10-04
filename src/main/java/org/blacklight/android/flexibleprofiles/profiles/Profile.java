@@ -8,28 +8,31 @@ public class Profile {
 	private final String name;
 	private final List<Setting> settings;
 	
-	public Profile(final String name, final Profile extend, final List<Setting> settings2) {
+	public Profile(final String name, final Profile extendz, final List<Setting> settings2) {
 		this.name = name;
 		this.settings = settings2;
 		
-		if (extend != null) {
-			for (Setting extendedSetting : extend.settings) {
-				boolean instanceFound = false;
-				for (Setting setting : settings2) {
-					if (setting.getClass().equals(extendedSetting.getClass())) {
-						instanceFound = true;
-						break;
-					}
-				}
-				
-				if (!instanceFound) {
-					settings2.add(extendedSetting);
-				}
-			}
+		if (extendz != null) {
+			applyExtension(extendz);
 		}
-		
 	}
 
+	public void applyExtension(final Profile extendz) {
+		for (Setting extendedSetting : extendz.settings) {
+			boolean instanceFound = false;
+			for (Setting setting : settings) {
+				if (setting.getClass().equals(extendedSetting.getClass())) {
+					instanceFound = true;
+					break;
+				}
+			}
+
+			if (!instanceFound) {
+				settings.add(extendedSetting);
+			}
+		}
+	}
+	
 	public String getName() {
 		return name;
 	}
