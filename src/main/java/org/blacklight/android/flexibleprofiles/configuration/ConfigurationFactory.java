@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.blacklight.android.flexibleprofiles.exceptions.ConfigurationParseException;
 import org.blacklight.android.flexibleprofiles.exceptions.FlexibleProfileException;
 import org.blacklight.android.flexibleprofiles.profiles.Profile;
@@ -21,8 +22,12 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class ConfigurationFactory {
+	private static final Logger log = LoggerFactory.getLogger(ConfigurationFactory.class);
+	
 	private static class ConfigurationParseContext {
 		private final Map<String, Profile> profiles;
 		private final Map<String, String> extendz;
@@ -37,6 +42,7 @@ public abstract class ConfigurationFactory {
 
 	public static Configuration fromReader(final Reader inputReader) throws FlexibleProfileException {
 		try {
+			log.debug("Parsing configuration XML from " + inputReader.getClass());
 			Document document = (Document) new SAXBuilder().build(inputReader);
 			Element rootElement = document.getRootElement();
 			if (rootElement == null || !rootElement.getName().toLowerCase().equals("flexible")) {
@@ -47,14 +53,21 @@ public abstract class ConfigurationFactory {
 			Element rulesNode = rootElement.getChild("rules");
 			ConfigurationParseContext context = new ConfigurationParseContext();
 			
+			log.debug("Parsing profiles");
 			List<Profile> profiles = parseProfiles(profilesNode, context);
+			
+			log.debug("Parsing rules");
 			List<Rule> rules = parseRules(rulesNode, context);
+			
+			log.debug("Binding rules to profiles");
 			postProcess(context);
 			
 			return new Configuration(profiles, rules);
 		} catch (JDOMException e) {
+			log.error(ExceptionUtils.getStackTrace(e));
 			throw new FlexibleProfileException(e);
 		} catch (IOException e) {
+			log.error(ExceptionUtils.getStackTrace(e));
 			throw new FlexibleProfileException(e);
 		}
 	}
@@ -65,7 +78,9 @@ public abstract class ConfigurationFactory {
 			Profile profile = context.profiles.get(profileName);
 			Profile extendz = context.profiles.get(extendsName);
 			if (extendz == null) {
-				throw new ConfigurationParseException("Profile name [" + extendsName + "] not found");
+				final String msg = "Profile name [" + extendsName + "] not found";
+				log.error(msg);
+				throw new ConfigurationParseException(msg);
 			}
 			
 			ProfileAdapter.applyExtension(profile, extendz);
@@ -75,7 +90,9 @@ public abstract class ConfigurationFactory {
 			String profileName = context.rulesProfiles.get(rule);
 			Profile profile = context.profiles.get(profileName);
 			if (profile == null) {
-				throw new ConfigurationParseException("Profile name [" + profileName + "] not found");
+				final String msg = "Profile name [" + profileName + "] not found";
+				log.error(msg);
+				throw new ConfigurationParseException(msg);
 			}
 			
 			RuleAdapter.setProfile(rule, profile);

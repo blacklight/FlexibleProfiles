@@ -1,7 +1,9 @@
 package org.blacklight.android.flexibleprofiles.ui;
 
-import org.blacklight.android.flexible_profiles.R;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import android.R;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 
 public class FlexibleProfilesActivity extends Activity {
 	private static FlexibleProfilesActivity instance;
+	private static final Logger log = LoggerFactory.getLogger(FlexibleProfilesActivity.class);
 	
 	public static FlexibleProfilesActivity getInstance() {
 		return instance;
@@ -25,12 +28,14 @@ public class FlexibleProfilesActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        log.info("Initializing activity " + this.getClass());
         setContentView(R.layout.activity_main);
         instance = this;
         
         final Button fileLoadButton = (Button) findViewById(R.id.fileLoadButton);
         final TextView filePathTextView = (AutoCompleteTextView) findViewById(R.id.filePathTextView);
         fileLoadButton.setOnClickListener(new FileLoadButtonListener(filePathTextView));
+        log.info("Initialized activity " + this.getClass());
     }
 
     @Override
