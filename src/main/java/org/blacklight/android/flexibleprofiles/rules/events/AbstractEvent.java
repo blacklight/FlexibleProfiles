@@ -7,4 +7,9 @@ public abstract class AbstractEvent implements Event {
 		return getClass().equals(event.getClass()) && getValue().equals(event.getValue());
 	}
 	
+	@Override
+	public void fire() {
+		// TODO
+	}
+	
 }

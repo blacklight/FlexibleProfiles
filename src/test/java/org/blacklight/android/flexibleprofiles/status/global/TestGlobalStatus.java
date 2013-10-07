@@ -1,4 +1,4 @@
-package org.blacklight.android.flexibleprofiles.tests;
+package org.blacklight.android.flexibleprofiles.status.global;
 
 import org.blacklight.android.flexibleprofiles.status.global.GlobalStatus;
 import org.junit.Test;

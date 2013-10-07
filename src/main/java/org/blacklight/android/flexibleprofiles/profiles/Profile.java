@@ -1,16 +1,21 @@
 package org.blacklight.android.flexibleprofiles.profiles;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.blacklight.android.flexibleprofiles.profiles.settings.Setting;
 
 public class Profile {
 	private final String name;
-	private final List<Setting> settings;
+	private final Collection<Setting> settings;
 	
-	public Profile(final String name, final Profile extendz, final List<Setting> settings2) {
+	public Profile(final String name, final Collection<Setting> settings) {
 		this.name = name;
-		this.settings = settings2;
+		this.settings = settings;
+	}
+	
+	public Profile(final String name, final Profile extendz, final Collection<Setting> settings) {
+		this.name = name;
+		this.settings = settings;
 		
 		if (extendz != null) {
 			applyExtension(extendz);
@@ -37,7 +42,7 @@ public class Profile {
 		return name;
 	}
 	
-	List<Setting> getSettings() {
+	Collection<Setting> getSettings() {
 		return settings;
 	}
 	

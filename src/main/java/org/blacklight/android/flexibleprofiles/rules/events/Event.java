@@ -10,4 +10,6 @@ public interface Event {
 	
 	public Class<? extends Status> getStatusClass();
 	
+	public void fire();
+	
 }

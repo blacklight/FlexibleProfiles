@@ -1,18 +1,11 @@
-package org.blacklight.android.flexibleprofiles.tests;
+package org.blacklight.android.flexibleprofiles.configuration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
 import java.util.Collection;
-import java.util.List;
 
-import org.blacklight.android.flexibleprofiles.configuration.Configuration;
-import org.blacklight.android.flexibleprofiles.configuration.ConfigurationFactory;
 import org.blacklight.android.flexibleprofiles.exceptions.FlexibleProfileException;
 import org.blacklight.android.flexibleprofiles.profiles.Profile;
 import org.blacklight.android.flexibleprofiles.profiles.ProfileAdapter;
@@ -27,8 +20,7 @@ import org.junit.Test;
 public class TestConfiguration {
 	@Test
 	public void testConfigurationParse() throws FileNotFoundException, FlexibleProfileException {
-		Configuration configuration = ConfigurationFactory.fromReader(
-			new BufferedReader(new InputStreamReader(new FileInputStream(new File("src/test/resources/profiles_script.xml")))));
+		Configuration configuration = MockConfiguration.getInstance();
 		
 		Collection<Profile> profiles = configuration.getProfiles();
 		assertEquals(4, profiles.size());
@@ -39,7 +31,7 @@ public class TestConfiguration {
 		
 		for (final Profile profile : profiles) { 
 			final String profileName = profile.getName();
-			final List<Setting> settings = ProfileAdapter.getSettings(profile);
+			final Collection<Setting> settings = ProfileAdapter.getSettings(profile);
 			
 			if (profileName.toLowerCase().equals("home")) {
 				assertEquals(2, settings.size());
