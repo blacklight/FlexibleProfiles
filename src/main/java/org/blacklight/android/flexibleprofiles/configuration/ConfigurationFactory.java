@@ -47,7 +47,7 @@ public abstract class ConfigurationFactory {
 			
 			List<Profile> profiles = parseProfiles(profilesNode, context);
 			List<Rule> rules = parseRules(rulesNode, context);
-			postProcessLogic(context);
+			postProcess(context);
 			
 			return new Configuration(profiles, rules);
 		} catch (JDOMException e) {
@@ -57,7 +57,7 @@ public abstract class ConfigurationFactory {
 		}
 	}
 
-	private static void postProcessLogic(final ConfigurationParseContext context) throws ConfigurationParseException {
+	private static void postProcess(final ConfigurationParseContext context) throws ConfigurationParseException {
 		for (final String profileName : context.extendz.keySet()) {
 			String extendsName = context.extendz.get(profileName);
 			Profile profile = context.profiles.get(profileName);

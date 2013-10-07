@@ -22,6 +22,20 @@ public abstract class SettingFactory {
 				throw new ConfigurationParseException(e);
 			}
 		}
+		else if (clazz.equals("bluetooth")) {
+			try {
+				setting = new BluetoothSetting(Boolean.parseBoolean(value));
+			} catch (final Exception e) {
+				throw new ConfigurationParseException(e);
+			}
+		}
+		else if (clazz.equals("sync")) {
+			try {
+				setting = new SyncSetting(Boolean.parseBoolean(value));
+			} catch (final Exception e) {
+				throw new ConfigurationParseException(e);
+			}
+		}
 		
 		return setting;
 	}
