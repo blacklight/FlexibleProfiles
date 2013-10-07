@@ -1,6 +1,7 @@
 package org.blacklight.android.flexibleprofiles.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,6 +15,7 @@ import org.blacklight.android.flexibleprofiles.configuration.Configuration;
 import org.blacklight.android.flexibleprofiles.configuration.ConfigurationFactory;
 import org.blacklight.android.flexibleprofiles.exceptions.FlexibleProfileException;
 import org.blacklight.android.flexibleprofiles.profiles.Profile;
+import org.blacklight.android.flexibleprofiles.profiles.ProfileAdapter;
 import org.blacklight.android.flexibleprofiles.profiles.settings.BluetoothSetting;
 import org.blacklight.android.flexibleprofiles.profiles.settings.MobileDataSetting;
 import org.blacklight.android.flexibleprofiles.profiles.settings.Setting;
@@ -37,7 +39,7 @@ public class TestConfiguration {
 		
 		for (final Profile profile : profiles) { 
 			final String profileName = profile.getName();
-			final List<Setting> settings = profile.getSettings();
+			final List<Setting> settings = ProfileAdapter.getSettings(profile);
 			
 			if (profileName.toLowerCase().equals("home")) {
 				assertEquals(2, settings.size());
@@ -142,8 +144,6 @@ public class TestConfiguration {
 			System.out.println("================");
 			System.out.println(rule.getName());
 			System.out.println(rule.getPriority());
-			System.out.println(rule.getEvents());
-			System.out.println(rule.getProfile().getName());
 		}
 	}
 

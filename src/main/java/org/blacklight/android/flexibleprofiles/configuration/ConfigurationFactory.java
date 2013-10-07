@@ -10,9 +10,11 @@ import java.util.Map;
 import org.blacklight.android.flexibleprofiles.exceptions.ConfigurationParseException;
 import org.blacklight.android.flexibleprofiles.exceptions.FlexibleProfileException;
 import org.blacklight.android.flexibleprofiles.profiles.Profile;
+import org.blacklight.android.flexibleprofiles.profiles.ProfileAdapter;
 import org.blacklight.android.flexibleprofiles.profiles.settings.Setting;
 import org.blacklight.android.flexibleprofiles.profiles.settings.SettingFactory;
 import org.blacklight.android.flexibleprofiles.rules.Rule;
+import org.blacklight.android.flexibleprofiles.rules.RuleAdapter;
 import org.blacklight.android.flexibleprofiles.rules.events.Event;
 import org.blacklight.android.flexibleprofiles.rules.events.EventFactory;
 import org.jdom.Document;
@@ -66,7 +68,7 @@ public abstract class ConfigurationFactory {
 				throw new ConfigurationParseException("Profile name [" + extendsName + "] not found");
 			}
 			
-			profile.applyExtension(extendz);
+			ProfileAdapter.applyExtension(profile, extendz);
 		}
 		
 		for (final Rule rule : context.rulesProfiles.keySet()) {
@@ -76,7 +78,7 @@ public abstract class ConfigurationFactory {
 				throw new ConfigurationParseException("Profile name [" + profileName + "] not found");
 			}
 			
-			rule.setProfile(profile);
+			RuleAdapter.setProfile(rule, profile);
 		}
 	}
 

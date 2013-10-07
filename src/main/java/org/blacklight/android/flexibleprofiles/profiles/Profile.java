@@ -17,7 +17,7 @@ public class Profile {
 		}
 	}
 
-	public void applyExtension(final Profile extendz) {
+	void applyExtension(final Profile extendz) {
 		for (Setting extendedSetting : extendz.settings) {
 			boolean instanceFound = false;
 			for (Setting setting : settings) {
@@ -37,7 +37,7 @@ public class Profile {
 		return name;
 	}
 	
-	public List<Setting> getSettings() {
+	List<Setting> getSettings() {
 		return settings;
 	}
 	

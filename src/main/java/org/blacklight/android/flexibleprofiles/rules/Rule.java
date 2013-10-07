@@ -25,7 +25,7 @@ public class Rule {
 		}
 	}
 
-	public void setProfile(final Profile profile) {
+	void setProfile(final Profile profile) {
 		this.profile = profile;
 	}
 	
@@ -55,14 +55,6 @@ public class Rule {
 	
 	public int getPriority() {
 		return priority;
-	}
-	
-	public List<Event> getEvents() {
-		return events;
-	}
-	
-	public Profile getProfile() {
-		return profile;
 	}
 
 }
