@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.blacklight.android.flexibleprofiles.profiles.Profile;
 import org.blacklight.android.flexibleprofiles.rules.events.Event;
+import org.blacklight.android.flexibleprofiles.status.global.GlobalStatus;
 
 public class Rule {
 	public final static int AUTOMATIC_PRIORITY = -1;
@@ -28,8 +29,20 @@ public class Rule {
 		this.profile = profile;
 	}
 	
-	public void isSatisfied() {
-		// TODO
+	public boolean isSatisfied() {
+		GlobalStatus globalStatus = GlobalStatus.getInstance();
+		boolean result = true;
+		
+		synchronized(globalStatus) {
+			for (final Event event : events) {
+				if (!globalStatus.statusEquals(event.getStatusClass(), event.getValue())) {
+					result = false;
+					break;
+				}
+			}
+		}
+		
+		return result;
 	}
 	
 	public void apply() {
@@ -48,4 +61,8 @@ public class Rule {
 		return events;
 	}
 	
+	public Profile getProfile() {
+		return profile;
+	}
+
 }

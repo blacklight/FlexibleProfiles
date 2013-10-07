@@ -143,6 +143,7 @@ public class TestConfiguration {
 			System.out.println(rule.getName());
 			System.out.println(rule.getPriority());
 			System.out.println(rule.getEvents());
+			System.out.println(rule.getProfile().getName());
 		}
 	}
 
