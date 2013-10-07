@@ -2,16 +2,17 @@ package org.blacklight.android.flexibleprofiles.status.global;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.blacklight.android.flexibleprofiles.configuration.Configuration;
 import org.blacklight.android.flexibleprofiles.environment.AppEnvironment;
 import org.blacklight.android.flexibleprofiles.exceptions.FlexibleProfileException;
 import org.blacklight.android.flexibleprofiles.rules.Rule;
 import org.blacklight.android.flexibleprofiles.rules.events.Event;
+import org.blacklight.android.flexibleprofiles.status.PowerConnectedStatus;
 import org.blacklight.android.flexibleprofiles.status.Status;
 import org.blacklight.android.flexibleprofiles.status.StatusFactory;
-import org.reflections.Reflections;
+import org.blacklight.android.flexibleprofiles.status.SyncEnabledStatus;
+import org.blacklight.android.flexibleprofiles.status.WiFiConnectedStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,15 +34,10 @@ public class GlobalStatus {
 	public GlobalStatus() {
 		AppEnvironment.getEventBus().register(this);
 		globalStatus = new HashMap<Class<? extends Status>, Status>();
-		Reflections reflections = new Reflections(Status.class.getPackage().getName());
-		Set<Class<? extends Status>> statusClasses = reflections.getSubTypesOf(Status.class);
 		
-		for (final Class<? extends Status> statusClass : statusClasses) {
-			Status status = StatusFactory.fromClass(statusClass);
-			if (status != null) {
-				globalStatus.put(statusClass, status);
-			}
-		}
+		globalStatus.put(PowerConnectedStatus.class, StatusFactory.fromClass(PowerConnectedStatus.class));
+		globalStatus.put(SyncEnabledStatus.class, StatusFactory.fromClass(SyncEnabledStatus.class));
+		globalStatus.put(WiFiConnectedStatus.class, StatusFactory.fromClass(WiFiConnectedStatus.class));
 	}
 	
 	public boolean statusEquals(final Class<? extends Status> statusClass, final Object value) {

@@ -1,9 +1,10 @@
 package org.blacklight.android.flexibleprofiles.ui;
 
+import org.blacklight.android.flexibleprofiles.R;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import android.R;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -40,9 +41,9 @@ public class FlexibleProfilesActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-	// Inflate the menu; this adds items to the action bar if it is present.
-	getMenuInflater().inflate(org.blacklight.android.flexible_profiles.R.menu.main, menu);
-	return true;
+    	// Inflate the menu; this adds items to the action bar if it is present.
+    	getMenuInflater().inflate(R.menu.main, menu);
+    	return true;
     }
     
 }
