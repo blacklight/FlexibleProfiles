@@ -37,6 +37,10 @@ public class Profile {
 		return name;
 	}
 	
+	public List<Setting> getSettings() {
+		return settings;
+	}
+	
 	public void apply() {
 		for (Setting setting : settings) {
 			setting.apply();

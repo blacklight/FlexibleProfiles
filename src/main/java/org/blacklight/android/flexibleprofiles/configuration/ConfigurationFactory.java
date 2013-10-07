@@ -101,7 +101,7 @@ public abstract class ConfigurationFactory {
 			int priority = Rule.AUTOMATIC_PRIORITY;
 			if (priorityStr != null) {
 				try {
-					priority = Integer.parseInt(name.trim());
+					priority = Integer.parseInt(priorityStr.trim());
 				} catch (final Exception e) {
 					throw new ConfigurationParseException("Invalid priority value [" + priorityStr + "] - it should be a number");
 				}
@@ -124,7 +124,7 @@ public abstract class ConfigurationFactory {
 			}
 			String profileName = parseApply(applyElement);
 			
-			Rule rule = new Rule(events, null, priority);
+			Rule rule = new Rule(name, events, null, priority);
 			rules.add(rule);
 			context.rulesProfiles.put(rule, profileName);
 		}

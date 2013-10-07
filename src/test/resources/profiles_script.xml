@@ -5,25 +5,25 @@
 		<!-- TODO We also want to support special profile "Flexible Disabled" -->
 
 		<profile name="Home">
-			<setting class="WiFi" value="On"/>
-			<setting class="Mobile Data" value="Off"/>
+			<setting class="WiFi" value="True"/>
+			<setting class="Mobile Data" value="False"/>
 		</profile>
 
 		<profile name="Charging" extends="Home">
-			<setting class="Bluetooth" value="On"/>
+			<setting class="Bluetooth" value="True"/>
 		</profile>
 
 		<profile name="Outdoor">
-			<setting class="WiFi" value="Off"/>
-			<setting class="Mobile Data" value="On"/>
-			<setting class="Sync" value="Off"/>
+			<setting class="WiFi" value="False"/>
+			<setting class="Mobile Data" value="True"/>
+			<setting class="Sync" value="False"/>
 		</profile>
 
 		<profile name="Office">
-			<setting class="WiFi" value="Off"/>
-			<setting class="Mobile Data" value="Off"/>
-			<setting class="Bluetooth" value="Off"/>
-			<setting class="Sync" value="Off"/>
+			<setting class="WiFi" value="False"/>
+			<setting class="Mobile Data" value="False"/>
+			<setting class="Bluetooth" value="False"/>
+			<setting class="Sync" value="False"/>
 		</profile>
 
 	</profiles>
@@ -32,7 +32,7 @@
 		<!-- Priority is sorted decreasingly. So 0 is the maximum priority -->
 		<rule name="When Charging" priority="1">
 			<when>
-				<event class="Power" value="True"/>
+				<event class="Power Connected" value="True"/>
 			</when>
 
 			<then>
@@ -43,7 +43,7 @@
 		<rule name="When At Home">
 			<when>
 				<event class="WiFi Connected" value="True"/>
-				<event class="Power" value="False"/>
+				<event class="Power Connected" value="False"/>
 				<!-- ESSID based too? -->
 			</when>
 

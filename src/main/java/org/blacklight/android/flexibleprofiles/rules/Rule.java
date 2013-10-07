@@ -7,11 +7,15 @@ import org.blacklight.android.flexibleprofiles.rules.events.Event;
 
 public class Rule {
 	public final static int AUTOMATIC_PRIORITY = -1;
+	private final String name;
 	private final List<Event> events;
+
 	private final int priority;
+
 	private Profile profile;
 	
-	public Rule(final List<Event> events, final Profile profile, final int priority) {
+	public Rule(final String name, final List<Event> events, final Profile profile, final int priority) {
+		this.name = name;
 		this.events = events;
 		this.priority = priority;
 		
@@ -31,4 +35,17 @@ public class Rule {
 	public void apply() {
 		profile.apply();
 	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public int getPriority() {
+		return priority;
+	}
+	
+	public List<Event> getEvents() {
+		return events;
+	}
+	
 }
