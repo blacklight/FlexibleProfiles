@@ -6,4 +6,6 @@ public interface Status {
 
 	public void setValue(final Object value);
 	
+	public void refreshValue();
+	
 }

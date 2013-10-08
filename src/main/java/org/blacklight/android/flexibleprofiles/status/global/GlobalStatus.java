@@ -63,6 +63,7 @@ public class GlobalStatus {
 			for (final Rule rule : Configuration.getInstance().getRules()) {
 				if (rule.isSatisfied() && rule.getPriority() > maximumPriority) {
 					appliedRule = new Rule(rule);
+					maximumPriority = appliedRule.getPriority();
 				}
 			}
 			

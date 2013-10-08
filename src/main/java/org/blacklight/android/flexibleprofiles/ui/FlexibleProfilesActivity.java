@@ -1,11 +1,14 @@
 package org.blacklight.android.flexibleprofiles.ui;
 
 import org.blacklight.android.flexibleprofiles.R;
+import org.blacklight.android.flexibleprofiles.service.FlexibleProfilesService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import android.app.Activity;
+import android.app.IntentService;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.widget.AutoCompleteTextView;
@@ -32,6 +35,9 @@ public class FlexibleProfilesActivity extends Activity {
         log.info("Initializing activity " + this.getClass());
         setContentView(R.layout.activity_main);
         instance = this;
+        
+        Intent intent = new Intent(getApplicationContext(), FlexibleProfilesService.class);
+        getApplicationContext().startService(intent);
         
         final Button fileLoadButton = (Button) findViewById(R.id.fileLoadButton);
         final TextView filePathTextView = (AutoCompleteTextView) findViewById(R.id.filePathTextView);

@@ -3,6 +3,10 @@ package org.blacklight.android.flexibleprofiles.status;
 
 public abstract class BooleanStatus implements Status {
 	private boolean status;
+	
+	public BooleanStatus() {
+		refreshValue();
+	}
 
 	@Override
 	public Object getValue() {
