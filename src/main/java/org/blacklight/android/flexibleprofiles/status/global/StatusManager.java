@@ -3,6 +3,7 @@ package org.blacklight.android.flexibleprofiles.status.global;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.blacklight.android.flexibleprofiles.configuration.Configuration;
 import org.blacklight.android.flexibleprofiles.environment.AppEnvironment;
 import org.blacklight.android.flexibleprofiles.exceptions.FlexibleProfileException;
@@ -35,9 +36,14 @@ public class StatusManager {
 		AppEnvironment.getEventBus().register(this);
 		globalStatus = new HashMap<Class<? extends Status>, Status>();
 		
-		globalStatus.put(PowerConnectedStatus.class, StatusFactory.fromClass(PowerConnectedStatus.class));
-		globalStatus.put(SyncEnabledStatus.class, StatusFactory.fromClass(SyncEnabledStatus.class));
-		globalStatus.put(WiFiConnectedStatus.class, StatusFactory.fromClass(WiFiConnectedStatus.class));
+		try {
+			globalStatus.put(PowerConnectedStatus.class, StatusFactory.fromClass(PowerConnectedStatus.class));
+			globalStatus.put(SyncEnabledStatus.class, StatusFactory.fromClass(SyncEnabledStatus.class));
+			globalStatus.put(WiFiConnectedStatus.class, StatusFactory.fromClass(WiFiConnectedStatus.class));
+		} catch (final Exception e) {
+			log.error(ExceptionUtils.getStackTrace(e));
+			// TODO Graphical error reporting
+		}
 	}
 	
 	public boolean statusEquals(final Class<? extends Status> statusClass, final Object value) {
