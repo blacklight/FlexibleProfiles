@@ -9,11 +9,8 @@ import org.blacklight.android.flexibleprofiles.environment.AppEnvironment;
 import org.blacklight.android.flexibleprofiles.exceptions.FlexibleProfileException;
 import org.blacklight.android.flexibleprofiles.rules.Rule;
 import org.blacklight.android.flexibleprofiles.rules.events.Event;
-import org.blacklight.android.flexibleprofiles.status.PowerConnectedStatus;
 import org.blacklight.android.flexibleprofiles.status.Status;
 import org.blacklight.android.flexibleprofiles.status.StatusFactory;
-import org.blacklight.android.flexibleprofiles.status.SyncEnabledStatus;
-import org.blacklight.android.flexibleprofiles.status.WiFiConnectedStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,9 +34,9 @@ public class StatusManager {
 		globalStatus = new HashMap<Class<? extends Status>, Status>();
 		
 		try {
-			globalStatus.put(PowerConnectedStatus.class, StatusFactory.fromClass(PowerConnectedStatus.class));
-			globalStatus.put(SyncEnabledStatus.class, StatusFactory.fromClass(SyncEnabledStatus.class));
-			globalStatus.put(WiFiConnectedStatus.class, StatusFactory.fromClass(WiFiConnectedStatus.class));
+			for (final Class<? extends Status> statusClass : AppEnvironment.getStatusClasses()) {
+				globalStatus.put(statusClass, StatusFactory.fromClass(statusClass));
+			}
 		} catch (final Exception e) {
 			log.error(ExceptionUtils.getStackTrace(e));
 			// TODO Graphical error reporting
