@@ -8,7 +8,7 @@ public class MockEnvironment implements Environment {
 
 	public static Environment getInstance() {
 		if (instance == null) {
-			instance = new AppEnvironment();
+			instance = new MockEnvironment();
 		}
 		
 		return instance;
