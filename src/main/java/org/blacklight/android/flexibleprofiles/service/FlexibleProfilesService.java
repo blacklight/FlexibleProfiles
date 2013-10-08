@@ -1,11 +1,15 @@
 package org.blacklight.android.flexibleprofiles.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import android.app.IntentService;
 import android.app.Service;
 import android.content.Intent;
 
 public class FlexibleProfilesService extends IntentService {
 	private static FlexibleProfilesService instance;
+	private final static Logger log = LoggerFactory.getLogger(FlexibleProfilesService.class);
 	private Intent intent;
 	
 	public static FlexibleProfilesService getInstance() {
@@ -31,6 +35,7 @@ public class FlexibleProfilesService extends IntentService {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		instance = this;
 		this.intent = intent;
+		log.info("Service started");
 		return Service.START_STICKY;
 	}
 }

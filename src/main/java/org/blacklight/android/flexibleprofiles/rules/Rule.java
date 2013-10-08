@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.blacklight.android.flexibleprofiles.profiles.Profile;
 import org.blacklight.android.flexibleprofiles.rules.events.Event;
-import org.blacklight.android.flexibleprofiles.status.global.GlobalStatus;
+import org.blacklight.android.flexibleprofiles.status.global.StatusManager;
 
 public class Rule {
 	public final static int AUTOMATIC_PRIORITY = -1;
@@ -43,7 +43,7 @@ public class Rule {
 	}
 	
 	public boolean isSatisfied() {
-		GlobalStatus globalStatus = GlobalStatus.getInstance();
+		StatusManager globalStatus = StatusManager.getInstance();
 		boolean result = true;
 		
 		for (final Event event : events.values()) {

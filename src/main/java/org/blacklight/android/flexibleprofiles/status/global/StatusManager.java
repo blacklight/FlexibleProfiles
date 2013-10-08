@@ -18,20 +18,20 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.Subscribe;
 
-public class GlobalStatus {
+public class StatusManager {
 	private final Map<Class<? extends Status>, Status> globalStatus;
-	private final static Logger log = LoggerFactory.getLogger(GlobalStatus.class);
-	private static GlobalStatus instance;
+	private final static Logger log = LoggerFactory.getLogger(StatusManager.class);
+	private static StatusManager instance;
 
-	public synchronized static GlobalStatus getInstance() {
+	public synchronized static StatusManager getInstance() {
 		if (instance == null) {
-			instance = new GlobalStatus();
+			instance = new StatusManager();
 		}
 		
 		return instance;
 	}
 	
-	public GlobalStatus() {
+	public StatusManager() {
 		AppEnvironment.getEventBus().register(this);
 		globalStatus = new HashMap<Class<? extends Status>, Status>();
 		
